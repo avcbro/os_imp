@@ -1,0 +1,205 @@
+@import "compass/css3";
+
+$yellow: #e6c747;
+$green: #2cc46d;
+$red: #c96160;
+$blue: #b8e3f0;
+$grayish: #4b5d6f;
+$brown: #d7c2a4;
+
+$duration: 3000;
+$total-items: 5;
+
+body {
+  background-color: lighten($grayish, 53);
+}
+
+.stage {
+  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -175px 0 0 -250px;
+  width: 500px;
+  height: 350px;
+}
+
+.factory {
+  position: absolute;
+  width: 100px;
+  height: 200px;
+  background: $yellow;
+  transform: translate(50px, 100px);
+  &::before {
+      @extend .ps;
+      background: darken($yellow, 15);
+      border-radius: 1px;
+      width: 110px;
+      height: 10px;
+      top: -10px;
+      left: -5px;
+    }
+  &::after {
+      @extend .ps;
+      width: 20px;
+      height: 20px;
+      top: 10px;
+      left: 10px;
+      border-radius: 50%;
+      background-color: $red;
+    }
+}
+
+.magic {
+  background: lighten($blue, 0);
+  width: 40px;
+  height: 45px;
+  position: absolute;
+  border-radius: 0 0 3px 3px;
+  transform: translate(0, -60px);
+  &::before {
+      @extend .ps;
+      background: darken($yellow, 20);
+      bottom: -5px;
+      left: 20%;
+      width: 60%;
+      height: 5px;
+    }
+    &::after {
+      @extend .ps;
+      background: darken($green, 5);
+      border-radius: 0 0 3px 3px;
+      bottom: 3px;
+      left: 3px;
+      width: 34px;
+      height: 70%;
+      animation: upDown 9000ms linear infinite normal;
+    }
+}
+
+.screen {
+  width: 60px;
+  height: 50px;
+  background-color: darken($grayish, 5);
+  position: absolute;
+  border-radius: 5px;
+  border: 3px solid lighten($yellow, 35);
+  transform: translate(15px, 60px);
+  overflow: hidden;
+  &::before,
+  &::after {
+    @extend .ps;
+      top: 0; 
+      left: 0;
+      width: 40px;
+      height: 40px;
+      box-shadow: inset 0 0 0 1px transparentize(lighten($green, 10), 0.8);
+      background-color: transparentize(lighten($green, 10), 0.9);
+      transform: translate(-100px, 0px);
+      animation: moveRightPseudo 650ms linear infinite normal;
+  }
+}
+
+.band {
+  position: absolute;
+  width: 350px;
+  height: 15px;
+  background: darken($grayish, 10);
+  border-radius: 8px;
+  transform: translate(50px, 210px);
+  &::before {
+      @extend .ps;
+      background-image: radial-gradient(lighten($grayish, 0) 40%, transparent 41%);
+      background-size: 15px 15px;
+      background-position: 0px 0px;
+      width: 90%;
+      height: 15px;
+      top: 0px;
+      right: 5px;
+      z-index: 2;
+      animation: band ($duration - 850)#{ms} linear infinite normal;
+    }
+    &::after {
+      @extend .ps;
+      background: $grayish;
+      width: 79%;
+      height: 75px;
+      top: 15px;
+      left: 57px;
+      transform: skew(-15deg);
+    }
+}
+
+ul {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: 420px;
+  height: 140px;
+  overflow: hidden;
+  transform: translate(50px, 160px);
+  &:after {
+      @extend .ps;
+      background: darken($grayish, 5);
+      border-radius: 50%;
+      width: 60px;
+      height: 5px;
+      bottom: 0px;
+      right: 20px;
+      z-index: 0;
+    }
+}
+
+li {
+  overflow: hidden;
+  z-index: 1;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: lighten($red, 5);
+  transform: translate(0px, 10px);
+  transform-origin: center bottom;
+  animation-name: moveRight;
+  animation-duration: #{$duration}ms;
+  animation-timing-function: linear;
+  animation-direction: normal;
+  animation-iteration-count: infinite;
+  &::after {
+      @extend .ps;
+      dsplay: block;
+      width: 25px;
+      height: 7px;
+      background-color: darken($red, 5);
+      top: 5px;
+      left: 5px;
+    }
+}
+
+@for $i from 1 through $total-items {
+  li:nth-child(#{$i}) {animation-delay: ($duration / $total-items) * ($i - 1)#{ms} }
+}
+
+.ps {content:''; position: absolute;}
+
+@keyframes moveRight {
+  0%   {transform: translate(0px, 10px);}
+  80%  {transform: translate(325px, 10px);}
+  90%  {transform: translate(330px, 13px)  rotateZ(90deg);}
+  100% {transform: translate(340px, 110px) rotateZ(135deg);}
+}
+
+@keyframes moveRightPseudo {
+  0%   {transform: translate(-50px, 6px);}
+  100% {transform: translate(60px, 6px)}
+}
+
+@keyframes upDown {
+  0%   {height: 70%}
+  70%  {height: 5%}
+  100% {height: 70%}
+}
+
+@keyframes band {
+  0%   {background-position: 0px 0px}
+  100% {background-position: 100% 0px}
+}

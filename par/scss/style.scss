@@ -1,0 +1,50 @@
+$u: 1.5em;
+
+@function phi() { @return (sqrt(5) + 1)/2; }
+@function particles($n, $m, $fo, $k) {
+  $sh: (); // container for list of box-shadows
+  $r: $u;
+  @for $i from 0 to $n {
+    $r: if(nth($fo, 1) == 0, 
+           pow($i, 1/nth($fo, 2))*$u, 
+           logarithm($i)*$u);
+    $a: 2*pi()*$k*$i;
+    $x: $r*cos($a); $y: $r*sin($a);
+    $sh: $sh, $x $y hsl(($i%$m)*360/$m, 100%, 50%);
+  }
+  @return $sh;
+}
+
+html { background: black; }
+.boo {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: .25em; height: .25em;
+  border-radius: 50%;
+  box-shadow: particles(80, 18, 0 2, phi());
+  animation: ani 10s linear infinite, 
+             rot 27.33s cubic-bezier(.17,-7.67,1,8.97) infinite;
+}
+
+@keyframes ani {
+   5% { box-shadow: particles(120, 60, 1 e(), pi()); }
+  10% { box-shadow: particles(160, 90, 0 2, pi()); }
+  15% { box-shadow: particles(120, 36, 0 3, e()); }
+  20% { box-shadow: particles(80, 80, 0 2, phi()); }
+  25% { box-shadow: particles(120, 120, 1 e(), e()); }
+  30% { box-shadow: particles(160, 45, 0 3, 1/phi()); }
+  35% { box-shadow: particles(120, 36, 0 3, 1/pi()); }
+  40% { box-shadow: particles(80, 40, 0 2, e()); }
+  45% { box-shadow: particles(160, 40, 0 2, sqrt(2)); }
+  50% { box-shadow: particles(80, 80, 1 e(), phi()); }
+  55% { box-shadow: particles(160, 90, 0 3, logarithm(3)); }
+  60% { box-shadow: particles(80, 40, 1 e(), sqrt(3)); }
+  65% { box-shadow: particles(120, 45, 0 3, sqrt(5)); }
+  70% { box-shadow: particles(160, 60, 0 2, 1/phi()); }
+  75% { box-shadow: particles(120, 60, 0 1, 1/phi()); }
+  80% { box-shadow: particles(80, 27, 1 e(), e()); }
+  85% { box-shadow: particles(120, 27, 0 1, e()); }
+  90% { box-shadow: particles(160, 45, 0 2, logarithm(2)); }
+  95% { box-shadow: particles(80, 45, 0 1, sqrt(5)); }
+}
+@keyframes rot { to { transform: rotate(-360deg); } }

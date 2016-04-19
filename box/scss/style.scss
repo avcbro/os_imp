@@ -1,0 +1,102 @@
+@import "compass/css3";
+
+$l: 9em;
+$fc: #fff;
+$bc: rgba(#000, .5);
+$t: 5s;
+
+@function between($n, $max: 1, $min: 0) {
+  @return $n < $max and $n > $min;
+}
+
+html, body {
+  overflow: hidden;
+  height: 100%;
+  perspective-origin: 50% calc(100% - #{5*$l});
+  perspective: 75em;
+  background: black;
+}
+.prism, .prism * {
+  position: absolute;
+  bottom: 0; left: 50%;
+}
+.prism {
+  margin-bottom: -$l/4;
+  transform-style: preserve-3d;
+  transform: rotateY(-45deg);
+  animation: move $t linear infinite
+}
+@keyframes move {
+  to { transform: rotateY(-45deg) translateY($l); }
+}
+.cube-face {
+  margin: 0 (-$l/2);
+  width: $l; height: $l;
+  background: 
+    linear-gradient($fc 20%, transparent 20%, 
+                    transparent 80%, $fc 80%) 0 0, 
+    linear-gradient($fc 20%, transparent 20%, 
+                    transparent 80%, $fc 80%) 100% 100%, 
+    linear-gradient($fc, $fc) 50% 50%, 
+    linear-gradient(90deg, $fc 20%, transparent 20%, 
+                    transparent 80%, $fc 80%) 0 0, 
+    linear-gradient(90deg, $fc 20%, transparent 20%, 
+                    transparent 80%, $fc 80%) 100% 100%, 
+    linear-gradient(90deg, $fc, $fc) 50% 50% $bc;
+  background-repeat: no-repeat;
+  background-size: 1px 100%, 1px 100%, 2px 25%, 
+                   100% 1px, 100% 1px, 25% 2px;
+  &:nth-child(n + 11) {
+    transform-origin: 100% 100%;
+    animation: inherit;
+  }
+  @for $i from 0 to 15 {
+    &:nth-child(#{$i + 1}) {
+      @if $i < 10 {
+        transform: 
+          if(not between($i%5, 4, 0), 
+             null, 
+             rotateY(($i%5)*-90deg)) //rotateY if needed
+          if($i%5 == 4, rotateX(90deg), null) //rotateX if needed
+          translate3d(0, 
+                      if($i%5 == 4, 0, floor($i/5)*-$l), 
+                      if($i%5 == 4, ceil($i/5)*$l - $l/2, $l/2));
+      }
+      @else {
+        animation-name: flip#{$i + 1 - 10};
+      }
+    }
+  }
+  &:last-child { transform-origin: 100% 0; }
+}
+
+@for $i from 0 to 5 {
+  $tr: translate3d(if(between($i, 4, 0), -$l, 0), -2*$l, $l/2);
+  @if between($i, 4, 0) {
+    @for $j from 0 to $i - 1 {
+      $tr: $tr rotateY(-90deg) translate(-$l);
+    }
+  }
+  @else {
+    $tr: $tr if($i == 4, rotateY(-90deg), null);
+  }
+  @keyframes flip#{$i + 1} {
+    @if $i > 0 {
+      0%, #{$i*20% - .01%} { opacity: 0; }
+    }
+    #{$i*20%} {
+      $tr1: $tr 
+            if(between($i, 4, 0), 
+               rotateY(-180deg), rotateX((4 - $i)*22.5deg));
+      transform: $tr1;
+      @if $i > 0 { opacity: 1; }
+    }
+    #{($i + 1)*20%}, 100% {
+      $tr2: $tr 
+            if(between($i, 4, 0), 
+               rotateY(-90deg), rotateX($i*22.5deg));
+      transform: $tr2;
+      @if $i > 0 { opacity: 1; }
+    }
+  }
+}
